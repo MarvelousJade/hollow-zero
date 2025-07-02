@@ -13,20 +13,23 @@ class Atlas {
 public:
     Atlas() = default;
 
-    ~Atlas() {
-        for (SDL_Texture* texture : m_textureList) {
-            SDL_DestroyTexture(texture);
-        }
-    };
+    ~Atlas() = default;
 
-    void load(SDL_Renderer* renderer, const char* pathTemplate, int num) {
-        for (int i = 0; i < num; i++) {
-            char pathFile[255];
-            std::snprintf(pathFile, sizeof(pathFile), pathTemplate, i + 1);
-            SDL_Texture* texture = IMG_LoadTexture(renderer, pathFile);
-            m_textureList.push_back(texture);
-        }
-    }
+    // void load(const char* pathTemplate, int num) {
+    //     AssetManager* assetManager = AssetManager::instance();
+    //     for (int i = 0; i < num; i++) {
+    //         char filePath[255];
+    //         std::snprintf(filePath, sizeof(filePath), pathTemplate, i + 1);
+    //         SDL_Texture* texture = assetManager->findTexture(filePath);
+    //
+    //         if( texture == NULL ) {
+    //             printf( "Unable to find texture for %s!\n", filePath);
+    //         } else {
+    //             m_textureList.push_back(texture);
+    //         } 
+    //
+    //     }
+    // }
 
     void clear() {
         m_textureList.clear();
