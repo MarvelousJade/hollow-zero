@@ -59,6 +59,10 @@ public:
         SDL_RenderCopyExF(m_renderer, texture, rectSrc, &rectDstWindow, 
                           angle, center, SDL_RendererFlip::SDL_FLIP_NONE);
     }
+
+    SDL_Renderer* getRenderer() const {
+        return m_renderer;
+    }
 };
 
 #endif
