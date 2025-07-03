@@ -1,4 +1,5 @@
 #include <SDL2/SDL_messagebox.h>
+#include <SDL2/SDL_render.h>
 #include <stdexcept>
 #define SDL_MAIN_HANDLED
 
@@ -131,15 +132,18 @@ void update(float deltaTime) {
 }
 
 void render(const Camera& camera) {
-    // {
-    //     int widthBg, heightBg;
-    //     SDL_QueryTexture(texBackground, nullptr, nullptr, &widthBg, &heightBg);
-    //     const SDL_FRect rectBg = {
-    //         (1280 - widthBg) / 2.0f,
-    //         (720 - heightBg) / 2.0f,
-    //         (float)widthBg,(float)heightBg
-    //     };
-    //     camera.renderTexture(texBackground, nullptr, &rectBg, 0, nullptr);
-    // } 
+    {
+        int widthBg, heightBg;
+
+        static SDL_Texture* texBackground = AssetManager::instance()->findTexture("background");
+
+        SDL_QueryTexture(texBackground, nullptr, nullptr, &widthBg, &heightBg);
+        const SDL_FRect rectBg = {
+            (1280 - widthBg) / 2.0f,
+            (720 - heightBg) / 2.0f,
+            (float)widthBg, (float)heightBg
+        };
+        camera.renderTexture(texBackground, nullptr, &rectBg, 0, nullptr);
+    } 
 }
 
