@@ -40,7 +40,7 @@ public:
     }
 
     SDL_Texture* getTexture(int idx) const {
-        if (idx < 0 || idx >= m_textureList.size()) return nullptr;
+        if (idx < 0 || static_cast<size_t>(idx) >= m_textureList.size()) return nullptr;
 
         return m_textureList[idx];
     }
