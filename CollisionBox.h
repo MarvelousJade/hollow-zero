@@ -12,7 +12,7 @@ class CollisionBox {
     friend class CollisionManager;
 
     Vector2 m_size;
-    Vector2 m_postion;
+    Vector2 m_position;
     bool m_isEnabled = true;
     std::function<void()> m_onCollide;
     CollisionLayer m_layerSrc = CollisionLayer::None;
@@ -47,7 +47,7 @@ public:
     }
 
     void setPosition(const Vector2& position) {
-        m_postion = position;
+        m_position = position;
     }
 };
 
