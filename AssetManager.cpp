@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-AssetManager* AssetManager::assetManager = nullptr;
+AssetManager* AssetManager::s_assetManager = nullptr;
 
 struct AtlasAssetInfo {
     std::string name;
@@ -23,9 +23,9 @@ AssetManager::AssetManager() = default;
 AssetManager::~AssetManager() = default;
 
 AssetManager* AssetManager::instance() {
-    if (!assetManager) assetManager = new AssetManager();
+    if (!s_assetManager) s_assetManager = new AssetManager();
 
-    return assetManager;
+    return s_assetManager;
 }
 
 Mix_Chunk* AssetManager::findAudio(const std::string& name) {

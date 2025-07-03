@@ -16,7 +16,7 @@ class AssetManager {
     AssetManager();
     ~AssetManager();
 
-    static AssetManager* assetManager;
+    static AssetManager* s_assetManager;
     std::unordered_map<std::string, Mix_Chunk*> audioPool;
     std::unordered_map<std::string, SDL_Texture*> texturePool;
     std::unordered_map<std::string, Atlas*> atlasPool;
