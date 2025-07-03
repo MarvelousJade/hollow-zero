@@ -61,25 +61,25 @@ void AssetManager::load(SDL_Renderer* renderer) {
         if (entry.is_regular_file()) {
             const path& filePath = entry.path();
             path relativePath = relative(filePath, assetsPath);
-            std::string key = relativePath.replace_extension("").u8string();
+            std::string key = relativePath.replace_extension("").string();
 
             if (filePath.extension() == ".png") {
-                SDL_Texture* texture = IMG_LoadTexture(renderer, filePath.u8string().c_str());
+                SDL_Texture* texture = IMG_LoadTexture(renderer, filePath.string().c_str());
 
                 if( texture == NULL ) {
                     throw std::runtime_error(
-                        std::format("Unable to create texture from {}! SDL Error: {}", filePath.u8string(), SDL_GetError()) 
+                        std::format("Unable to create texture from {}! SDL Error: {}", filePath.string(), SDL_GetError()) 
                     );
                 } else {
                     texturePool[key] = texture;
                 }
 
             } else if (filePath.extension() == ".mp3") {
-                Mix_Chunk* audio = Mix_LoadWAV(filePath.u8string().c_str());
+                Mix_Chunk* audio = Mix_LoadWAV(filePath.string().c_str());
 
                 if( audio == NULL ) {
                     throw std::runtime_error(
-                        std::format("Unable to create Mix Chunk from {}! SDL Error: {}", filePath.u8string(), SDL_GetError()) 
+                        std::format("Unable to create Mix Chunk from {}! SDL Error: {}", filePath.string(), SDL_GetError()) 
                     );
                 } else {
                     audioPool[key] = audio;
@@ -142,7 +142,7 @@ Atlas* AssetManager::createAtlasByPattern(const std::string& basePath, int count
         
         std::filesystem::path fullPath(basePath + "/" + std::to_string(i) + ".png");
         std::filesystem::path relativePath = std::filesystem::relative(fullPath, "assets");
-        std::string key = relativePath.replace_extension("").u8string();
+        std::string key = relativePath.replace_extension("").string();
 
         SDL_Texture* texture = findTexture(key);
 
