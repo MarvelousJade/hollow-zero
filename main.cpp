@@ -14,8 +14,6 @@
 #include <chrono>
 #include <thread>
 #include <string>
-#include <vector>
-#include <algorithm>
 #include <iostream>
 
 Camera* camera = nullptr;

@@ -1,6 +1,7 @@
 #include "CollisionManager.h"
 
 #include <SDL2/SDL.h>
+
 #include <algorithm>
 
 CollisionManager* CollisionManager::s_collisionManager = nullptr;
