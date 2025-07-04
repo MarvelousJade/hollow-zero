@@ -55,8 +55,8 @@ public:
         return p_hurtBox;
     }
 
-    bool isBelowFloor() const {
-        return p_position.y > FLOOR_Y; // >=
+    bool isOnFloor() const {
+        return p_position.y >= FLOOR_Y; // >=
     }
 
     float getFloorY() const {

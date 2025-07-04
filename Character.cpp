@@ -45,7 +45,7 @@ void Character::onUpdate(float deltaTime) {
 
     p_position += p_velocity * deltaTime;
 
-    if (isBelowFloor()) {
+    if (isOnFloor()) {
         p_position.y = FLOOR_Y;
         p_velocity.y = 0; 
     }
