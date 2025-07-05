@@ -32,7 +32,7 @@ public:
         return m_isRollOnCooldown && !m_isRolling && m_isRollKeyDown;
     }
 
-    void setAttack(bool flag) {
+    void setAttacking(bool flag) {
         m_isAttacking = flag;
     }
 

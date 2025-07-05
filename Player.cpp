@@ -2,6 +2,7 @@
 #include "Animation.h"
 #include "AssetManager.h"
 #include "Character.h"
+#include "utils.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -280,8 +281,7 @@ void Player::render(const Camera& camera) {
 }
 
 void Player::onHurt() {
-    Mix_Chunk* hurt = AssetManager::instance()->findAudio("player_hurt");
-    Mix_PlayChannel(-1, hurt, false);
+    playAudio("player_hurt", false); 
 }
 
 void Player::onJump() {
