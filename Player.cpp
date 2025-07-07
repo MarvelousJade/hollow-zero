@@ -1,8 +1,7 @@
 #include "Player.h"
-#include "Animation.h"
 #include "AssetManager.h"
-#include "Character.h"
 #include "utils.h"
+#include "PlayerStateNodes.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -187,7 +186,15 @@ Player::Player() {
     }
 
     {
-        //  TODO: Initialize State Machine
+        p_stateMachine.registerState("attack", new PlayerAttackState());
+        p_stateMachine.registerState("dead", new PlayerAttackState());
+        p_stateMachine.registerState("fall", new PlayerAttackState());
+        p_stateMachine.registerState("idle", new PlayerAttackState());
+        p_stateMachine.registerState("jump", new PlayerAttackState());
+        p_stateMachine.registerState("roll", new PlayerAttackState());
+        p_stateMachine.registerState("run", new PlayerAttackState());
+
+        p_stateMachine.setEntry("idle");
     }
 }
 
