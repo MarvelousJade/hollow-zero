@@ -4,7 +4,7 @@
 #include "PlayerStateNodes.h"
 #include "AssetManager.h"
 #include "Vector2.h"
-#include "utils.h"
+#include "Utils.h"
 
 #include <SDL2/SDL_mixer.h>
 #include <cstdlib>

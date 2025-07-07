@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "AssetManager.h"
-#include "utils.h"
+#include "Utils.h"
 #include "PlayerStateNodes.h"
 
 #include <SDL2/SDL.h>
