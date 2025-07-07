@@ -37,8 +37,8 @@ Player::Player() {
     );
 
     m_timerAttackCooldown.setDuration(CD_ATTACK);
-    m_timerRollCooldown.setOneShot(true);
-    m_timerRollCooldown.setOnTimeOut(
+    m_timerAttackCooldown.setOneShot(true);
+    m_timerAttackCooldown.setOnTimeOut(
         [&]() {
             m_isAttackOnCooldown = true;
         }
@@ -187,12 +187,12 @@ Player::Player() {
 
     {
         p_stateMachine.registerState("attack", new PlayerAttackState());
-        p_stateMachine.registerState("dead", new PlayerAttackState());
-        p_stateMachine.registerState("fall", new PlayerAttackState());
-        p_stateMachine.registerState("idle", new PlayerAttackState());
-        p_stateMachine.registerState("jump", new PlayerAttackState());
-        p_stateMachine.registerState("roll", new PlayerAttackState());
-        p_stateMachine.registerState("run", new PlayerAttackState());
+        p_stateMachine.registerState("dead", new PlayerDeadState());
+        p_stateMachine.registerState("fall", new PlayerFallState());
+        p_stateMachine.registerState("idle", new PlayerIdleState());
+        p_stateMachine.registerState("jump", new PlayerJumpState());
+        p_stateMachine.registerState("roll", new PlayerRollState());
+        p_stateMachine.registerState("run", new PlayerRunState());
 
         p_stateMachine.setEntry("idle");
     }
@@ -282,7 +282,7 @@ void Player::render(const Camera& camera) {
 
     Character::render(camera);
 
-    if (m_isAttacking) {
+    if (m_isAttacking && m_currentSlashAnimation) {
         m_currentSlashAnimation->render(camera);
     }
 }
@@ -316,15 +316,22 @@ void Player::onAttack() {
     switch(m_attackDirection) {
     case Player::AttackDirection::Up:
         m_currentSlashAnimation = &m_animationSlashUp;
+        break;
     case Player::AttackDirection::Down:
         m_currentSlashAnimation = &m_animationSlashDown;
+        break;
     case Player::AttackDirection::Left:
         m_currentSlashAnimation = &m_animationSlashLeft;
+        break;
     case Player::AttackDirection::Right:
         m_currentSlashAnimation = &m_animationSlashRight;
+        break;
     }
-    m_currentSlashAnimation->setPosition(getLogicCenter());
-    m_currentSlashAnimation->reset();
+
+    if (m_currentSlashAnimation) {
+        m_currentSlashAnimation->setPosition(getLogicCenter());
+        m_currentSlashAnimation->reset();
+    }
 }
 
 void Player::updateAttackDirection(int x, int y) {
