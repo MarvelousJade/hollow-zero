@@ -167,6 +167,8 @@ void mainLoop() {
                     isRunning = false; 
                     break;
             }
+
+            CharacterManager::instance()->onInput(event);
         }
         steady_clock::time_point frameStart = steady_clock::now();
         duration<float> deltaTime = duration<float>(frameStart - lastTick);
