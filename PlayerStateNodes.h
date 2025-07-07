@@ -74,7 +74,7 @@ private:
 
 class PlayerRunState : public StateNode {
 public: 
-    PlayerRunState();
+    PlayerRunState() = default;
     ~PlayerRunState() = default;
 
     void onEnter() override;
