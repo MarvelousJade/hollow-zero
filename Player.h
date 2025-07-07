@@ -36,8 +36,8 @@ public:
         m_isAttacking = flag;
     }
 
-    bool getAttack() const {
-        return m_isRolling;
+    bool getAttacking() const {
+        return m_isAttacking;
     }
  
     bool canAttack() const {
