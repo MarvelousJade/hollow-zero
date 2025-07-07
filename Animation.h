@@ -133,7 +133,11 @@ public:
 
         SDL_FRect rectDst;
         rectDst.x = m_position.x - frame.m_rectSrc.w / 2.0f;
-        rectDst.y = m_position.y - frame.m_rectSrc.h / 2.0f;
+        if (m_anchorMode == AnchorMode::BottomCentered) {
+            rectDst.y = m_position.y - frame.m_rectSrc.h;
+        } else {
+            rectDst.y = m_position.y - frame.m_rectSrc.h / 2.0f;
+        }
         rectDst.w = (float)frame.m_rectSrc.w; 
         rectDst.h = (float)frame.m_rectSrc.h;
 
