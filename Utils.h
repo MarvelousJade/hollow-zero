@@ -6,10 +6,15 @@
 #include <random>
 #include <iostream>
 
-inline void playAudio(const std::string& name, bool shouldLoop) {
+inline int playAudio(const std::string& name, bool shouldLoop) {
     Mix_Chunk* chunk = AssetManager::instance()->findAudio(name);
     std::cout << name << " Mix Chunk: " << (chunk ? "OK" : "NULL") << std::endl;
-    Mix_PlayChannel(-1, chunk, shouldLoop);
+
+    if (chunk) {
+        int loops = shouldLoop ? -1 : 0; // -1 for infinite loop, 0 for play once
+        return Mix_PlayChannel(-1, chunk, loops);
+    }
+    return -1; // Failed to play
 }
 
 inline int randomInt(int min, int max) {

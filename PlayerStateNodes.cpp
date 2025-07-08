@@ -222,7 +222,7 @@ void PlayerRollState::onExit() {
 void PlayerRunState::onEnter() {
     CharacterManager::instance()->getPlayer()->setAnimation("run");
 
-    playAudio("audio/player_run", true);
+    m_playerRunAudioChannel = playAudio("audio/player_run", true);
 }
 
 void PlayerRunState::onUpdate(float deltaTime) {
@@ -242,5 +242,8 @@ void PlayerRunState::onUpdate(float deltaTime) {
 }
 
 void PlayerRunState::onExit() {
-    Mix_HaltMusic();
+    if (m_playerRunAudioChannel != -1) {
+        Mix_HaltChannel(m_playerRunAudioChannel);
+        m_playerRunAudioChannel = -1;
+    }
 }

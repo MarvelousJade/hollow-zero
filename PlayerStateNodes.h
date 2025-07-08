@@ -73,6 +73,8 @@ private:
 };
 
 class PlayerRunState : public StateNode {
+     int m_playerRunAudioChannel = -1;
+
 public: 
     PlayerRunState() = default;
     ~PlayerRunState() = default;
