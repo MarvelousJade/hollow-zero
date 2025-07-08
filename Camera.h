@@ -5,6 +5,7 @@
 #include "Vector2.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
 
 class Camera {
     Vector2 m_position;
@@ -51,13 +52,15 @@ public:
     }
 
     void renderTexture(SDL_Texture* texture, const SDL_Rect* rectSrc,
-                       const SDL_FRect* rectDst, double angle, const SDL_FPoint* center) const {
+                       const SDL_FRect* rectDst, double angle, const SDL_FPoint* center, const bool shouldFlip = false) const {
         SDL_FRect  rectDstWindow = *rectDst;
         rectDstWindow.x -= m_position.x;
         rectDstWindow.y -= m_position.y;
+        
+        SDL_RendererFlip flip = shouldFlip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
         SDL_RenderCopyExF(m_renderer, texture, rectSrc, &rectDstWindow, 
-                          angle, center, SDL_RendererFlip::SDL_FLIP_NONE);
+                          angle, center, flip);
     }
 
     SDL_Renderer* getRenderer() const {

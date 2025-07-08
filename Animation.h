@@ -24,14 +24,15 @@ private:
     struct Frame {
         SDL_Rect m_rectSrc;
         SDL_Texture* m_texture = nullptr;
+        bool m_shouldFlip = false;
 
         bool isEmpty() const {
             return m_texture == nullptr;
         }
 
         Frame() = default; 
-        Frame(SDL_Texture* texture, const SDL_Rect& rectSrc) 
-            : m_rectSrc(rectSrc), m_texture(texture) {}; 
+        Frame(SDL_Texture* texture, const SDL_Rect& rectSrc, const bool shouldFlip) 
+            : m_rectSrc(rectSrc), m_texture(texture), m_shouldFlip(shouldFlip) {}; 
 
         ~Frame() = default; 
     };
@@ -100,7 +101,7 @@ public:
         m_onFinished = onFinished;
     }
 
-    void addFrame(SDL_Texture* texture, int horizontalFrames) {
+    void addFrame(SDL_Texture* texture, int horizontalFrames, bool shouldFlip = false) {
         if (!texture) {
             std::cerr << "ERROR: null texture passed to addFrame!" << std::endl;
             return;
@@ -122,13 +123,13 @@ public:
             rectSrc.x = i * frameWidth, rectSrc.y = 0;
             rectSrc.w = frameWidth, rectSrc.h = height;
 
-            m_frameList.emplace_back(texture, rectSrc);
+            m_frameList.emplace_back(texture, rectSrc, shouldFlip);
         }
 
         std::cerr << "Total frames now: " << m_frameList.size() << std::endl;
     }
 
-    void addFrame(Atlas* atlas) {
+    void addFrame(Atlas* atlas, bool shouldFlip = false) {
         for (int i =0; i < atlas->getSize(); i++) {
             SDL_Texture* texture = atlas->getTexture(i);
 
@@ -139,7 +140,7 @@ public:
             rectSrc.x = 0, rectSrc.y = 0;
             rectSrc.w = width, rectSrc.h = height;
 
-            m_frameList.emplace_back(texture, rectSrc);
+            m_frameList.emplace_back(texture, rectSrc, shouldFlip);
         }
     }
 
@@ -166,7 +167,7 @@ public:
         rectDst.w = (float)frame.m_rectSrc.w; 
         rectDst.h = (float)frame.m_rectSrc.h;
 
-        camera.renderTexture(frame.m_texture, &frame.m_rectSrc, &rectDst, m_angle, &m_center);
+        camera.renderTexture(frame.m_texture, &frame.m_rectSrc, &rectDst, m_angle, &m_center, frame.m_shouldFlip);
     }
 };
 

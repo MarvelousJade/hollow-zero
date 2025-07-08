@@ -80,7 +80,7 @@ Player::Player() {
             animationAttackLeft.setInterval(0.05f);
             animationAttackLeft.setLoop(false);
             animationAttackLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
-            animationAttackLeft.addFrame(AssetManager::instance()->findTexture("player/attack"), 5);
+            animationAttackLeft.addFrame(AssetManager::instance()->findTexture("player/attack"), 5, true);
 
             Animation& animationAttackRight = animationAttack.right;
             animationAttackRight.setInterval(0.05f);
@@ -99,7 +99,7 @@ Player::Player() {
             animationDeadLeft.setInterval(0.1f);
             animationDeadLeft.setLoop(false);
             animationDeadLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
-            animationDeadLeft.addFrame(AssetManager::instance()->findTexture("player/dead"), 6);
+            animationDeadLeft.addFrame(AssetManager::instance()->findTexture("player/dead"), 6, true);
 
             Animation& animationDeadRight = animationDead.right;
             animationDeadRight.setInterval(0.1f);
@@ -114,7 +114,7 @@ Player::Player() {
             animationFallLeft.setInterval(0.15f);
             animationFallLeft.setLoop(true);
             animationFallLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
-            animationFallLeft.addFrame(AssetManager::instance()->findTexture("player/fall"), 5);
+            animationFallLeft.addFrame(AssetManager::instance()->findTexture("player/fall"), 5, true);
 
             Animation& animationFallRight = animationFall.right;
             animationFallRight.setInterval(0.15f);
@@ -129,7 +129,7 @@ Player::Player() {
             animationIdleLeft.setInterval(0.15f);
             animationIdleLeft.setLoop(true);
             animationIdleLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
-            animationIdleLeft.addFrame(AssetManager::instance()->findTexture("player/idle"), 5);
+            animationIdleLeft.addFrame(AssetManager::instance()->findTexture("player/idle"), 5, true);
 
             Animation& animationIdleRight = animationIdle.right;
             animationIdleRight.setInterval(0.15f);
@@ -144,7 +144,7 @@ Player::Player() {
             animationJumpLeft.setInterval(0.15f);
             animationJumpLeft.setLoop(false);
             animationJumpLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
-            animationJumpLeft.addFrame(AssetManager::instance()->findTexture("player/jump"), 5);
+            animationJumpLeft.addFrame(AssetManager::instance()->findTexture("player/jump"), 5, true);
 
             Animation& animationJumpRight = animationJump.right;
             animationJumpRight.setInterval(0.15f);
@@ -159,7 +159,7 @@ Player::Player() {
             animationRollLeft.setInterval(0.05f);
             animationRollLeft.setLoop(false);
             animationRollLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
-            animationRollLeft.addFrame(AssetManager::instance()->findTexture("player/roll"), 7);
+            animationRollLeft.addFrame(AssetManager::instance()->findTexture("player/roll"), 7, true);
 
             Animation& animationRollRight = animationRoll.right;
             animationRollRight.setInterval(0.05f);
@@ -174,7 +174,7 @@ Player::Player() {
             animationRunLeft.setInterval(0.075f);
             animationRunLeft.setLoop(true);
             animationRunLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
-            animationRunLeft.addFrame(AssetManager::instance()->findTexture("player/run"), 10);
+            animationRunLeft.addFrame(AssetManager::instance()->findTexture("player/run"), 10, true);
 
             Animation& animationRunRight = animationRun.right;
             animationRunRight.setInterval(0.075f);
