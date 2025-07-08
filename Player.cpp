@@ -249,10 +249,11 @@ void Player::onInput(const SDL_Event& e) {
                     m_isAttackKeyDown = true;
                     updateAttackDirection();
                     break;
-                                case SDL_SCANCODE_SPACE:
+                case SDL_SCANCODE_K:
+                case SDL_SCANCODE_SPACE:
                     m_isJumpKeyDown = true;
                     break;
-                case SDL_SCANCODE_K:
+                case SDL_SCANCODE_L:
                 case SDL_SCANCODE_LSHIFT:
                     m_isRollKeyDown = true;
                     break;
@@ -266,10 +267,11 @@ void Player::onInput(const SDL_Event& e) {
                 case SDL_SCANCODE_J:
                     m_isAttackKeyDown = false;
                     break;
+                case SDL_SCANCODE_K:
                 case SDL_SCANCODE_SPACE:
                     m_isJumpKeyDown = false;
                     break;
-                case SDL_SCANCODE_K:
+                case SDL_SCANCODE_L:
                 case SDL_SCANCODE_LSHIFT:
                     m_isRollKeyDown = false;
                     break;            
