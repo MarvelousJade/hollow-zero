@@ -8,7 +8,8 @@
 
 #include <SDL2/SDL.h>
 
-#include <type_traits>
+#include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <functional>
 
@@ -24,16 +25,20 @@ private:
         SDL_Rect m_rectSrc;
         SDL_Texture* m_texture = nullptr;
 
+        bool isEmpty() const {
+            return m_texture == nullptr;
+        }
+
         Frame() = default; 
         Frame(SDL_Texture* texture, const SDL_Rect& rectSrc) 
-            : m_texture(texture), m_rectSrc(rectSrc) {}; 
+            : m_rectSrc(rectSrc), m_texture(texture) {}; 
 
         ~Frame() = default; 
     };
 
     Vector2 m_position;
     double m_angle = 0;
-    SDL_FPoint m_center = { 0 };
+    SDL_FPoint m_center = { 0, 0 };
 
     Timer m_timer;
     bool m_isLoop = true;
@@ -65,6 +70,8 @@ public:
         m_idxFrame = 0;
     }
 
+    size_t getFrameCount() const { return m_frameList.size(); }
+
     void setAnchorMode(AnchorMode mode) {
         m_anchorMode  = mode;
     }
@@ -94,8 +101,19 @@ public:
     }
 
     void addFrame(SDL_Texture* texture, int horizontalFrames) {
+        if (!texture) {
+            std::cerr << "ERROR: null texture passed to addFrame!" << std::endl;
+            return;
+        }
+
         int width, height;
-        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        int result = SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+        if (result != 0) {
+            std::cerr << "ERROR: SDL_QueryTexture failed: " << SDL_GetError() << std::endl;
+            return;
+        }
+
+        std::cerr << "Adding frames: texture=" << texture << ", w=" << width << ", h=" << height << ", frames=" << horizontalFrames << std::endl;
 
         int frameWidth = width / horizontalFrames;
 
@@ -106,6 +124,8 @@ public:
 
             m_frameList.emplace_back(texture, rectSrc);
         }
+
+        std::cerr << "Total frames now: " << m_frameList.size() << std::endl;
     }
 
     void addFrame(Atlas* atlas) {
@@ -129,6 +149,11 @@ public:
 
     void render(const Camera& camera) const {
         const Frame& frame = m_frameList[m_idxFrame];
+
+        // if (frame.isEmpty()) {
+        //     std::cerr << "Empty frame at: " << m_idxFrame << std::endl;
+        // }
+        
         const Vector2& cameraPos = camera.getPosition();
 
         SDL_FRect rectDst;

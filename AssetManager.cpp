@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <filesystem>
+#include <iostream>
 #include <stdexcept>
 #include <format>
 #include <string>
@@ -39,7 +40,10 @@ Mix_Chunk* AssetManager::findAudio(const std::string& name) {
 SDL_Texture* AssetManager::findTexture(const std::string& name) {
     const auto& it = texturePool.find(name); 
 
-    if (it == texturePool.end()) return nullptr;
+    if (it == texturePool.end()) {
+        std::cerr << "Can't find texture: " << name << std::endl;
+        return nullptr;
+    }
 
     return it->second;
 }

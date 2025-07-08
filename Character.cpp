@@ -69,9 +69,17 @@ void Character::onUpdate(float deltaTime) {
 }
 
 void Character::render(const Camera& camera) {
-    if (!p_currentAnimation || (p_isInvulnerable && p_isBlinkInvisible)) return;
+    if (!p_currentAnimation) {
+        std::cerr << "ERROR: p_currentAnimation is NULL!" << std::endl;
+        return;
+    }
 
-    (p_isFacingLeft ? p_currentAnimation->left : p_currentAnimation->right).render(camera);
+    Animation& anim = (p_isFacingLeft ? p_currentAnimation->left : p_currentAnimation->right);
+   // std::cerr << "About to render animation, frames: " << anim.getFrameCount() << std::endl;
+
+    if (p_isInvulnerable && p_isBlinkInvisible) return;
+    
+    anim.render(camera);
 }
 
 
@@ -82,7 +90,17 @@ void Character::switchState(const std::string& id) {
 }
 
 void Character::setAnimation(const std::string& id) {
+    std::cerr << "Setting animation to: " << id << std::endl;
+    auto it = p_animationPool.find(id);
+    if (it == p_animationPool.end()) {
+        std::cerr << "ERROR: Animation '" << id << "' not found in pool!" << std::endl;
+        return;
+    }
+
     p_currentAnimation = &p_animationPool[id];
+    std::cerr << "Animation " << id << " set successfully, address: " << p_currentAnimation << std::endl;
+    std::cerr << "Left frames: " << p_currentAnimation->left.getFrameCount() 
+              << ", Right frames: " << p_currentAnimation->right.getFrameCount() << std::endl;
 
     p_currentAnimation->left.reset();
     p_currentAnimation->right.reset();

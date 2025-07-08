@@ -2,6 +2,9 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 LDFLAGS_DYNAMIC = -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 
+CXXFLAGS_DEBUG = -std=c++20 -Wall -Wextra -g -O0 -DDEBUG
+OBJECTS_DEBUG = $(addprefix build/debug/, $(SOURCES:.cpp=.o))
+
 SOURCES = main.cpp AssetManager.cpp Character.cpp CharacterManager.cpp CollisionManager.cpp Player.cpp PlayerStateNodes.cpp StateMachine.cpp StateNode.cpp
 HEADERS = Animation.h AssetManager.h Atlas.h Camera.h Character.h CharacterManager.h CollisionBox.h CollisionLayer.h CollisionManager.h Player.h PlayerStateNodes.h StateMachine.h StateNode.h Timer.h Vector2.h Utils.h
 OBJECTS = $(addprefix build/, $(SOURCES:.cpp=.o))
@@ -26,10 +29,26 @@ run: build/$(EXECUTABLE)
 	@echo "Running $(EXECUTABLE)..."
 	@cd . && ./build/$(EXECUTABLE)
 
-# Debug run with gdb
-debug: build/$(EXECUTABLE)
-	@echo "Starting $(EXECUTABLE) with gdb..."
-	@cd . && gdb ./build/$(EXECUTABLE)
+# Debug build
+
+# Add these targets
+build/debug/$(EXECUTABLE): $(OBJECTS_DEBUG) | build/debug
+	$(CXX) $(OBJECTS_DEBUG) -o $@ $(LDFLAGS_DYNAMIC)
+
+build/debug/%.o: %.cpp $(HEADERS) | build/debug
+	$(CXX) $(CXXFLAGS_DEBUG) -c $< -o $@
+
+build/debug:
+	mkdir -p build/debug
+
+debug: build/debug/$(EXECUTABLE)
+	@echo "Starting debug version with gdb..."
+	@cd . && gdb ./build/debug/$(EXECUTABLE)
+
+# Add a debug run target
+run-debug: build/debug/$(EXECUTABLE)
+	@echo "Running debug version..."
+	@cd . && ./build/debug/$(EXECUTABLE)
 
 # Run with valgrind for memory checking
 valgrind: build/$(EXECUTABLE)

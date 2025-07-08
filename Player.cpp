@@ -5,7 +5,9 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+
 #include <cmath>
+#include <iostream>
 
 Player::Player() {
     p_isFacingLeft = false;
@@ -44,6 +46,32 @@ Player::Player() {
         }
     );
 
+    std::cout << "Setting up player animations..." << std::endl;
+    
+    // Check critical textures before using them:
+    SDL_Texture* attackTex = AssetManager::instance()->findTexture("player/attack");
+    SDL_Texture* idleTex = AssetManager::instance()->findTexture("player/idle");
+    SDL_Texture* rollTex = AssetManager::instance()->findTexture("player/roll");
+    SDL_Texture* runTex = AssetManager::instance()->findTexture("player/run");
+    SDL_Texture* attackVfxTex = AssetManager::instance()->findTexture("player/vfx_attack_right");
+
+    std::cout << "Attack texture: " << (attackTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Idle texture: " << (idleTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Roll texture: " << (rollTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Run texture: " << (runTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Attack Vfx texture: " << (attackVfxTex ? "OK" : "NULL") << std::endl;
+    
+    // Test SDL_QueryTexture directly:
+    if (attackTex) {
+        int w, h;
+        int result = SDL_QueryTexture(attackTex, nullptr, nullptr, &w, &h);
+        std::cout << "Attack texture query result: " << result << ", size: " << w << "x" << h << std::endl;
+    }
+
+    if (!attackTex || !idleTex || !rollTex || !runTex) {
+        throw std::runtime_error("Missing critical textures - cannot create Player");
+    }
+
     {
         {
             AnimationGroup& animationAttack = p_animationPool["attack"];
@@ -58,7 +86,11 @@ Player::Player() {
             animationAttackRight.setInterval(0.05f);
             animationAttackRight.setLoop(false);
             animationAttackRight.setAnchorMode(Animation::AnchorMode::BottomCentered);
+
+            std::cout << "10. Adding frames to attack right animation..." << std::endl;
             animationAttackRight.addFrame(AssetManager::instance()->findTexture("player/attack"), 5);
+
+            std::cout << "11. Attack animations complete!" << std::endl;
         }
         {
             AnimationGroup& animationDead = p_animationPool["dead"];
