@@ -28,7 +28,7 @@ public:
         return m_isRolling;
     }
  
-    bool canRoll() const {
+    bool shouldRoll() const {
         return m_isRollOnCooldown && !m_isRolling && m_isRollKeyDown;
     }
 
@@ -40,11 +40,11 @@ public:
         return m_isAttacking;
     }
  
-    bool canAttack() const {
+    bool shouldAttack() const {
         return m_isAttackOnCooldown && !m_isAttacking && m_isAttackKeyDown;
     }
 
-    bool canJump() const {
+    bool shouldJump() const {
         return isOnFloor() && m_isJumpKeyDown;
     }
 

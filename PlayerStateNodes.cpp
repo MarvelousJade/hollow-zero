@@ -2,13 +2,11 @@
 #include "Player.h"
 #include "CharacterManager.h"
 #include "PlayerStateNodes.h"
-#include "AssetManager.h"
 #include "Vector2.h"
 #include "Utils.h"
 
 #include <SDL2/SDL_mixer.h>
 #include <cstdlib>
-#include <random>
 
 PlayerAttackState::PlayerAttackState() {
     m_timer.setDuration(0.3f);
@@ -127,7 +125,7 @@ void PlayerFallState::onUpdate(float deltaTime) {
         player->onLanding();
 
         playAudio("audio/player_land", false);
-    } else if (player->canAttack()) { // Not sure if this should be getAttacking() or not
+    } else if (player->shouldAttack()) { // Not sure if this should be getAttacking() or not
         player->switchState("attack"); 
     }
 }
@@ -141,13 +139,13 @@ void PlayerIdleState::onUpdate(float deltaTime) {
 
     if (player->getHp() <= 0) {
         player->switchState("dead");
-    } else if (player->canAttack()) { // Not sure if this should be getAttacking() or not
+    } else if (player->shouldAttack()) { // Not sure if this should be getAttacking() or not
         player->switchState("attack"); 
     } else if (player->getVelocity().y > 0) {
         player->switchState("fall");
-    } else if (player->canJump()) {
+    } else if (player->shouldJump()) {
         player->switchState("jump");
-    } else if (player->canRoll()) {
+    } else if (player->shouldRoll()) {
         player->switchState("roll");
     } else if (player->isOnFloor() && player->getMoveAxis() !=0) {
         player->switchState("run");
@@ -171,7 +169,7 @@ void PlayerJumpState::onUpdate(float deltaTime) {
         player->switchState("dead");
     } else if (player->getVelocity().y > 0) {
         player->switchState("fall");
-    } else if (player->canAttack()) { // Not sure if this should be getAttacking() or not
+    } else if (player->shouldAttack()) { // Not sure if this should be getAttacking() or not
         player->switchState("attack"); 
     }
 }
@@ -207,7 +205,7 @@ void PlayerRollState::onUpdate(float deltaTime) {
     if (!player->getRolling()) {
         if (player->getMoveAxis() !=  0) {
             player->switchState("run");
-        } else if (player->canJump()) {
+        } else if (player->shouldJump()) {
             player->switchState("jump");
         } else {
             player->switchState("idle");
@@ -232,11 +230,11 @@ void PlayerRunState::onUpdate(float deltaTime) {
         player->switchState("dead");
     } else if (player->getMoveAxis() ==0) {
         player->switchState("idle");
-    } else if (player->canJump()) {
+    } else if (player->shouldJump()) {
         player->switchState("jump");
-    } else if (player->canAttack()) { // Not sure if this should be getAttacking() or not
+    } else if (player->shouldAttack()) { // Not sure if this should be getAttacking() or not
         player->switchState("attack"); 
-    } else if (player->canRoll()) {
+    } else if (player->shouldRoll()) {
         player->switchState("roll");
     }
 }
