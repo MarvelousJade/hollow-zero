@@ -214,7 +214,7 @@ Player::Player() {
         m_animationLandingVfx.setLoop(false);
         m_animationLandingVfx.setAnchorMode(Animation::AnchorMode::BottomCentered);
         m_animationLandingVfx.addFrame(AssetManager::instance()->findTexture("player/vfx_land"), 2);
-        m_animationJumpVfx.setOnFinished([&]() { m_isLandingVfxVisible = false; });
+        m_animationLandingVfx.setOnFinished([&]() { m_isLandingVfxVisible = false; });
     }
 
     {
