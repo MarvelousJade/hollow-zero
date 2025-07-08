@@ -111,8 +111,6 @@ bool init() {
         return false;
     }
 
-    SDL_ShowCursor(SDL_DISABLE);
-
     // Load assets
     try {
         std::cout << "Loading assets..." << std::endl;

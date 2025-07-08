@@ -249,7 +249,7 @@ void Player::onInput(const SDL_Event& e) {
                     m_isAttackKeyDown = true;
                     updateAttackDirection();
                     break;
-                case SDL_SCANCODE_SPACE:
+                                case SDL_SCANCODE_SPACE:
                     m_isJumpKeyDown = true;
                     break;
                 case SDL_SCANCODE_K:
@@ -278,6 +278,15 @@ void Player::onInput(const SDL_Event& e) {
                     break;
             }
             break;
+        case SDL_MOUSEBUTTONDOWN:
+            m_isAttackKeyDown = true;
+            updateAttackDirection(e.motion.x, e.motion.y);
+            break;
+        case SDL_MOUSEBUTTONUP:
+            m_isAttackKeyDown = false;
+            break;
+
+
     }
 }
 
