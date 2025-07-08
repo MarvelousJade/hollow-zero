@@ -22,7 +22,7 @@ PlayerAttackState::PlayerAttackState() {
 }
 
 void PlayerAttackState::onEnter() {
-    CharacterManager::instance()->getPlayer()->setAnimation("player/attack");
+    CharacterManager::instance()->getPlayer()->setAnimation("attack");
 
     Player* player = (Player*)CharacterManager::instance()->getPlayer(); 
     player->getHitBox()->setEnabled(true);
@@ -188,7 +188,7 @@ PlayerRollState::PlayerRollState() {
 }
 
 void PlayerRollState::onEnter() {
-    CharacterManager::instance()->getPlayer()->setAnimation("player/roll");
+    CharacterManager::instance()->getPlayer()->setAnimation("roll");
 
     Player* player = (Player*)CharacterManager::instance()->getPlayer(); 
     player->getHurtBox()->setEnabled(false);
