@@ -247,6 +247,7 @@ void Player::onInput(const SDL_Event& e) {
             switch (e.key.keysym.scancode) {
                 case SDL_SCANCODE_J:
                     m_isAttackKeyDown = true;
+                    updateAttackDirection();
                     break;
                 case SDL_SCANCODE_SPACE:
                     m_isJumpKeyDown = true;
@@ -377,5 +378,17 @@ void Player::updateAttackDirection(int x, int y) {
         m_attackDirection = AttackDirection::Left;
     } else {
         m_attackDirection = AttackDirection::Up;
+    }
+}
+
+void Player::updateAttackDirection() {
+    if (m_isDownKeyDown && !m_isUpKeyDown) {
+        m_attackDirection = AttackDirection::Down;
+    } else if (m_isUpKeyDown && !m_isDownKeyDown) {
+        m_attackDirection = AttackDirection::Up;
+    } else if (p_isFacingLeft) {
+        m_attackDirection = AttackDirection::Left;
+    } else if (!p_isFacingLeft) {
+        m_attackDirection = AttackDirection::Right;
     }
 }

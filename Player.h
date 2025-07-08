@@ -98,7 +98,7 @@ private:
     Animation m_animationLandingVfx;
 
     void updateAttackDirection(int x, int y);
-
+    void updateAttackDirection();
 };
 
 #endif
