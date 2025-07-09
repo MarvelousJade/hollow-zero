@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "CharacterManager.h"
+#include "BulletTimeManager.h"
 
 CharacterManager* CharacterManager::s_manager = nullptr;
 
@@ -18,6 +19,7 @@ void CharacterManager::update(float deltaTime) {
 }
 
 void CharacterManager::render(const Camera& camera) {
+    BulletTimeManager::instance()->postProcess(camera);
     m_player->render(camera);
 }
 

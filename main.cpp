@@ -4,6 +4,7 @@
 #include "AssetManager.h"
 #include "CollisionManager.h"
 #include "CharacterManager.h"
+#include "BulletTimeManager.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -185,7 +186,10 @@ void mainLoop() {
 
 void update(float deltaTime) {
     camera->update(deltaTime);
-    CharacterManager::instance()->update(deltaTime);
+
+    float scaledDeltaTime = BulletTimeManager::instance()->update(deltaTime);
+    CharacterManager::instance()->update(scaledDeltaTime);
+
     CollisionManager::instance()->handleCollision();
 }
 

@@ -5,8 +5,9 @@ LDFLAGS_DYNAMIC = -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 CXXFLAGS_DEBUG = -std=c++20 -Wall -Wextra -g -O0 -DDEBUG
 OBJECTS_DEBUG = $(addprefix build/debug/, $(SOURCES:.cpp=.o))
 
-SOURCES = main.cpp AssetManager.cpp Character.cpp CharacterManager.cpp CollisionManager.cpp Player.cpp PlayerStateNodes.cpp StateMachine.cpp StateNode.cpp
-HEADERS = Animation.h AssetManager.h Atlas.h Camera.h Character.h CharacterManager.h CollisionBox.h CollisionLayer.h CollisionManager.h Player.h PlayerStateNodes.h StateMachine.h StateNode.h Timer.h Vector2.h Utils.h
+SOURCES = main.cpp AssetManager.cpp Character.cpp CharacterManager.cpp CollisionManager.cpp Player.cpp PlayerStateNodes.cpp StateMachine.cpp StateNode.cpp BulletTimeManager.cpp
+HEADERS = Animation.h AssetManager.h Atlas.h Camera.h Character.h CharacterManager.h CollisionBox.h CollisionLayer.h CollisionManager.h Player.h PlayerStateNodes.h StateMachine.h StateNode.h Timer.h Vector2.h Utils.h BulletTimeManager.h
+
 OBJECTS = $(addprefix build/, $(SOURCES:.cpp=.o))
 EXECUTABLE = hollowZero
 

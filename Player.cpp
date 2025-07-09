@@ -2,6 +2,7 @@
 #include "AssetManager.h"
 #include "Utils.h"
 #include "PlayerStateNodes.h"
+#include "BulletTimeManager.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -242,6 +243,8 @@ void Player::onInput(const SDL_Event& e) {
     m_isUpKeyDown = currentKeyStates[SDL_SCANCODE_W] || currentKeyStates[SDL_SCANCODE_UP];
     m_isDownKeyDown = currentKeyStates[SDL_SCANCODE_S] || currentKeyStates[SDL_SCANCODE_DOWN];
 
+    int bulletTimtChannel = -1;
+
     switch (e.type) {
         case SDL_KEYDOWN:
             switch (e.key.keysym.scancode) {
@@ -259,6 +262,13 @@ void Player::onInput(const SDL_Event& e) {
                     break;
                 case SDL_SCANCODE_R:
                     // Bullet time
+                    if (BulletTimeManager::instance()->getStatus() ==  BulletTimeManager::Status::Entering) {
+                        BulletTimeManager::instance()->setStatus(BulletTimeManager::Status::Exiting);
+                        if (bulletTimtChannel != -1) Mix_HaltChannel(bulletTimtChannel);
+                    } else {
+                        bulletTimtChannel = playAudio("audio/bullet_time", false);
+                        BulletTimeManager::instance()->setStatus(BulletTimeManager::Status::Entering);
+                    }                  
                     break;
             }
             break;
@@ -281,14 +291,29 @@ void Player::onInput(const SDL_Event& e) {
             }
             break;
         case SDL_MOUSEBUTTONDOWN:
-            m_isAttackKeyDown = true;
-            updateAttackDirection(e.motion.x, e.motion.y);
+            switch (e.button.button) {
+                case SDL_BUTTON_LEFT:
+                    m_isAttackKeyDown = true;
+                    updateAttackDirection(e.motion.x, e.motion.y);
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    if (BulletTimeManager::instance()->getStatus() ==  BulletTimeManager::Status::Entering) {
+                        BulletTimeManager::instance()->setStatus(BulletTimeManager::Status::Exiting);
+                        if (bulletTimtChannel != -1) Mix_HaltChannel(bulletTimtChannel);
+                    } else {
+                        bulletTimtChannel = playAudio("audio/bullet_time", false);
+                        BulletTimeManager::instance()->setStatus(BulletTimeManager::Status::Entering);
+                    }
+                    break;
+            }
             break;
         case SDL_MOUSEBUTTONUP:
-            m_isAttackKeyDown = false;
-            break;
-
-
+            switch (e.button.button) {
+                case SDL_BUTTON_LEFT:
+                    m_isAttackKeyDown = false;
+                    break;
+            }
+            break; 
     }
 }
 
