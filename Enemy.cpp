@@ -6,7 +6,9 @@
 #include "AssetManager.h"
 #include "CollisionBox.h"
 #include "CollisionManager.h"
+#include "EnemyStateNodes.h"
 #include "Utils.h"
+
 #include <algorithm>
 
 Enemy::Enemy() {
@@ -221,7 +223,20 @@ Enemy::Enemy() {
     }
 
     {
-        // TODO: Initialize States
+        p_stateMachine.registerState("aim", new EnemyAimState());
+        p_stateMachine.registerState("dashInAir", new EnemyDashInAirState());
+        p_stateMachine.registerState("dashOnFloor", new EnemyDashOnFloorState());
+        p_stateMachine.registerState("dead", new EnemyDeadState());
+        p_stateMachine.registerState("fall", new EnemyFallState());
+        p_stateMachine.registerState("idle", new EnemyIdleState());
+        p_stateMachine.registerState("jump", new EnemyJumpState());
+        p_stateMachine.registerState("run", new EnemyRunState());
+        p_stateMachine.registerState("squat", new EnemySquatState());
+        p_stateMachine.registerState("throwBarb", new EnemyThrowBarbState());
+        p_stateMachine.registerState("thrwoSilk", new EnemyThrowSilkState());
+        p_stateMachine.registerState("thrwoSword", new EnemyThrowSwordState());
+
+        p_stateMachine.setEntry("idle");
     }
 }
 
