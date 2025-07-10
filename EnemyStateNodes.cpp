@@ -200,7 +200,6 @@ void EnemyIdleState::onUpdate(float deltaTime) {
 
 void EnemyIdleState::onExit() {
     Enemy* enemy = dynamic_cast<Enemy*>(CharacterManager::instance()->getEnemy());
-
     enemy->setFacingLeft(enemy->getPosition().x > CharacterManager::instance()->getPlayer()->getPosition().x);
 }
 
