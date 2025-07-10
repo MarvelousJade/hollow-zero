@@ -242,13 +242,13 @@ Enemy::Enemy() {
         Animation& animationDashOnFloorLeft = m_animationDashOnFloorVfx.left;
         animationDashOnFloorLeft.setInterval(0.1f);
         animationDashOnFloorLeft.setLoop(false);
-        animationDashOnFloorLeft.setAnchorMode(Animation::AnchorMode::Centered);
+        animationDashOnFloorLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
         animationDashOnFloorLeft.addFrame(AssetManager::instance()->findAtlas("enemy/vfx_dash_on_floor"));
 
         Animation& animationDashOnFloorRight = m_animationDashOnFloorVfx.right;
         animationDashOnFloorRight.setInterval(0.1f);
         animationDashOnFloorRight.setLoop(false);
-        animationDashOnFloorRight.setAnchorMode(Animation::AnchorMode::Centered);
+        animationDashOnFloorRight.setAnchorMode(Animation::AnchorMode::BottomCentered);
         animationDashOnFloorRight.addFrame(AssetManager::instance()->findAtlas("enemy/vfx_dash_on_floor"), true);
     }
 
