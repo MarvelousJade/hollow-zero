@@ -3,12 +3,10 @@
 
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
-#include <filesystem>
+#include <algorithm>
 #include <iostream>
 #include <stdexcept>
-#include <format>
 #include <string>
-#include <vector>
 
 AssetManager* AssetManager::s_assetManager = nullptr;
 
@@ -21,7 +19,22 @@ struct AtlasAssetInfo {
 
 AssetManager::AssetManager() = default;
 
-AssetManager::~AssetManager() = default;
+AssetManager::~AssetManager() {
+    for (auto& [name, atlas] : atlasPool) {
+        delete atlas;
+    }
+    atlasPool.clear();
+
+    for (auto& [name, texture] : texturePool) {
+        SDL_DestroyTexture(texture);
+    }
+    texturePool.clear();
+
+    for (auto& [name, chunk] : audioPool) {
+        Mix_FreeChunk(chunk);
+    }
+    audioPool.clear();
+};
 
 AssetManager* AssetManager::instance() {
     if (!s_assetManager) s_assetManager = new AssetManager();
@@ -32,7 +45,10 @@ AssetManager* AssetManager::instance() {
 Mix_Chunk* AssetManager::findAudio(const std::string& name) {
     const auto& it = audioPool.find(name); 
 
-    if (it == audioPool.end()) return nullptr;
+    if (it == audioPool.end()) {
+        std::cerr << "Warning: Can't find audio: " << name << std::endl;
+        return nullptr;
+    }
 
     return it->second;
 }
@@ -41,7 +57,7 @@ SDL_Texture* AssetManager::findTexture(const std::string& name) {
     const auto& it = texturePool.find(name); 
 
     if (it == texturePool.end()) {
-        std::cerr << "Can't find texture: " << name << std::endl;
+        std::cerr << "Warning: Can't find texture: " << name << std::endl;
         return nullptr;
     }
 
@@ -51,7 +67,10 @@ SDL_Texture* AssetManager::findTexture(const std::string& name) {
 Atlas* AssetManager::findAtlas(const std::string& name) {
     const auto& it = atlasPool.find(name); 
 
-    if (it == atlasPool.end()) return nullptr;
+    if (it == atlasPool.end()) {
+        std::cerr << "Warning: Can't find atlas: " << name << std::endl;
+        return nullptr;
+    }
 
     return it->second;
     
@@ -59,113 +78,184 @@ Atlas* AssetManager::findAtlas(const std::string& name) {
 
 void AssetManager::load(SDL_Renderer* renderer) {
     using namespace std::filesystem;
-    path assetsPath("assets");
-
-    for (const auto& entry : recursive_directory_iterator(assetsPath)) {
-        if (entry.is_regular_file()) {
-            const path& filePath = entry.path();
-            path relativePath = relative(filePath, assetsPath);
-            std::string key = relativePath.replace_extension("").string();
-
-            if (filePath.extension() == ".png") {
-                SDL_Texture* texture = IMG_LoadTexture(renderer, filePath.string().c_str());
-
-                if( texture == NULL ) {
-                    throw std::runtime_error(
-                        std::format("Unable to create texture from {}! SDL Error: {}", filePath.string(), SDL_GetError()) 
-                    );
-                } else {
-                    texturePool[key] = texture;
-                }
-
-            } else if (filePath.extension() == ".mp3") {
-                Mix_Chunk* audio = Mix_LoadWAV(filePath.string().c_str());
-
-                if( audio == NULL ) {
-                    throw std::runtime_error(
-                        std::format("Unable to create Mix Chunk from {}! SDL Error: {}", filePath.string(), SDL_GetError()) 
-                    );
-                } else {
-                    audioPool[key] = audio;
-                }
-            }
-        }
+    
+    if (!renderer) {
+        throw std::runtime_error("Renderer is null!");
     }
 
+    path assetsPath("assets");
+    if (!exists(assetsPath)) {
+        throw std::runtime_error("Assets directory not found!");
+    }
+
+    std::cout << "Loading assets from: " << absolute(assetsPath) << std::endl;
+
+    // First pass: Load all textures and audio
+    loadTexturesAndAudio(renderer, assetsPath);
+    
+    // Second pass: Create atlases from loaded textures
+    loadAtlases();
+    
+    std::cout << "Asset loading complete!" << std::endl;
+    std::cout << "  Textures loaded: " << texturePool.size() << std::endl;
+    std::cout << "  Audio loaded: " << audioPool.size() << std::endl;
+    std::cout << "  Atlases created: " << atlasPool.size() << std::endl;
+}
+
+void AssetManager::loadTexturesAndAudio(SDL_Renderer* renderer, const std::filesystem::path& assetsPath) {
+    using namespace std::filesystem;
+    
+    for (const auto& entry : recursive_directory_iterator(assetsPath)) {
+        if (!entry.is_regular_file()) continue;
+        
+        const path& filePath = entry.path();
+        path relativePath = relative(filePath, assetsPath);
+        
+        // Normalize path separators to forward slashes for consistency
+        std::string key = relativePath.generic_string();
+        
+        // Remove extension
+        size_t lastDot = key.find_last_of('.');
+        if (lastDot != std::string::npos) {
+            key = key.substr(0, lastDot);
+        }
+
+        if (filePath.extension() == ".png") {
+            loadTexture(renderer, filePath, key);
+        } else if (filePath.extension() == ".mp3") {
+            loadAudio(filePath, key);
+        }
+    }
+} 
+
+void AssetManager::loadTexture(SDL_Renderer* renderer, const std::filesystem::path& filePath, const std::string& key) {
+    SDL_Texture* texture = IMG_LoadTexture(renderer, filePath.string().c_str());
+    
+    if (!texture) {
+        std::cerr << "Warning: Failed to load texture " << filePath << ": " << IMG_GetError() << std::endl;
+        return;
+    }
+    
+    texturePool[key] = texture;
+}
+
+void AssetManager::loadAudio(const std::filesystem::path& filePath, const std::string& key) {
+    Mix_Chunk* audio = Mix_LoadWAV(filePath.string().c_str());
+    
+    if (!audio) {
+        std::cerr << "Warning: Failed to load audio " << filePath << ": " << Mix_GetError() << std::endl;
+        return;
+    }
+    
+    audioPool[key] = audio;
+}
+
+void AssetManager::loadAtlases() {
+    // Load enemy atlases (directories with numbered PNG files)
     loadEnemyAtlases();
 }
 
-std::vector<AtlasAssetInfo> AssetManager::discoverEnemyAtlases() {
-    using namespace std::filesystem;
-    std::vector<AtlasAssetInfo> atlases;
-
-    path enemyPath("assets/enemy");
-
-    for (const auto& entry : directory_iterator(enemyPath)) {
-        if (entry.is_directory()) {
-            std::string atlasName = entry.path().filename().string();
-            std::string basePath = entry.path().string();
-
-            int frameCount = 0;
-            for (const auto& file : directory_iterator(entry)) {
-                if (file.path().extension() == ".png") {
-                    frameCount++;
-                }
-            }
-
-            if (frameCount > 0) {
-                atlases.push_back({atlasName, basePath, frameCount});
-            }
+void AssetManager::loadEnemyAtlases() {
+    auto discoveredAtlases = discoverAtlases("enemy");
+    
+    for (const auto& info : discoveredAtlases) {
+        Atlas* atlas = createAtlasFromDirectory(info);
+        if (atlas && atlas->getSize() > 0) {
+            atlasPool[info.name] = atlas;
+        } else {
+            delete atlas;
+            std::cerr << "Warning: Failed to create atlas for " << info.name << std::endl;
         }
     }
+}
 
+std::vector<AtlasAssetInfo> AssetManager::discoverAtlases(const std::string& subdir) {
+    using namespace std::filesystem;
+    std::vector<AtlasAssetInfo> atlases;
+    
+    path searchPath = path("assets") / subdir;
+    
+    if (!exists(searchPath)) {
+        std::cerr << "Warning: Directory " << searchPath << " does not exist" << std::endl;
+        return atlases;
+    }
+
+    for (const auto& entry : directory_iterator(searchPath)) {
+        if (!entry.is_directory()) continue;
+        
+        AtlasAssetInfo info;
+        info.basePath = entry.path().string();
+        
+        // Create atlas name as relative path from assets directory
+        info.name = (path(subdir) / entry.path().filename()).generic_string();
+        
+        // Count PNG files and verify they're numbered sequentially
+        std::vector<int> frameNumbers;
+        for (const auto& file : directory_iterator(entry)) {
+            if (file.path().extension() == ".png") {
+                std::string filename = file.path().stem().string();
+                try {
+                    int frameNum = std::stoi(filename);
+                    frameNumbers.push_back(frameNum);
+                } catch (...) {
+                    std::cerr << "Warning: Non-numeric filename in atlas directory: " << file.path() << std::endl;
+                }
+            }
+        }
+        
+        if (!frameNumbers.empty()) {
+            std::sort(frameNumbers.begin(), frameNumbers.end());
+            info.frameCount = frameNumbers.size();
+            
+            // Verify frames are sequential starting from 1
+            bool isSequential = true;
+            for (size_t i = 0; i < frameNumbers.size(); ++i) {
+                if (frameNumbers[i] != static_cast<int>(i + 1)) {
+                    isSequential = false;
+                    break;
+                }
+            }
+            
+            if (!isSequential) {
+                std::cerr << "Warning: Non-sequential frame numbers in " << info.name << std::endl;
+            }
+            
+            atlases.push_back(info);
+        }
+    }
+    
     return atlases;
-};
+}
+
+Atlas* AssetManager::createAtlasFromDirectory(const AtlasAssetInfo& info) {
+    Atlas* atlas = new Atlas();
+    
+    for (int i = 1; i <= info.frameCount; ++i) {
+        // Build the texture key
+        std::string key = info.name + "/" + std::to_string(i);
+        
+        SDL_Texture* texture = findTexture(key);
+        if (texture) {
+            atlas->addTexture(texture);
+        } else {
+            std::cerr << "Warning: Missing texture for atlas frame: " << key << std::endl;
+        }
+    }
+    
+    return atlas;
+}
 
 Atlas* AssetManager::createAtlas(const std::vector<std::string>& textureNames) {
     Atlas* atlas = new Atlas();
     
     for (const std::string& name : textureNames) {
         SDL_Texture* texture = findTexture(name);
-        if( texture == NULL ) {
-            throw std::runtime_error(
-                std::format("Unable to find texture for name: {}!", name) 
-            );
-            } else {
-                atlas->addTexture(texture);
-            }
-    }
-    
-    return atlas;
-}
-
-Atlas* AssetManager::createAtlasByPattern(const std::string& basePath, int count) {
-    Atlas* atlas = new Atlas();
-    
-    for (int i = 1; i <= count; i++) {
-        
-        std::filesystem::path fullPath(basePath + "/" + std::to_string(i) + ".png");
-        std::filesystem::path relativePath = std::filesystem::relative(fullPath, "assets");
-        std::string key = relativePath.replace_extension("").string();
-
-        SDL_Texture* texture = findTexture(key);
-
-        if( texture == NULL ) {
-            throw std::runtime_error(
-                std::format("Unable to find texture for texture name: {}!", key) 
-            );
-        } else {
+        if (texture) {
             atlas->addTexture(texture);
+        } else {
+            std::cerr << "Warning: Texture not found for atlas: " << name << std::endl;
         }
     }
     
     return atlas;
-}
-
-void AssetManager::loadEnemyAtlases() {
-    auto discoveredAtlases = discoverEnemyAtlases();
-
-    for (const auto& info : discoveredAtlases) {
-        atlasPool[info.name] = createAtlasByPattern(info.basePath, info.frameCount);
-    }
 }
