@@ -95,7 +95,7 @@ PlayerDeadState::PlayerDeadState() {
     m_timer.setOneShot(true);
     m_timer.setOnTimeOut(
         [&]() {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "No...", "Mission Failes", NULL);
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "This won't work", "Mission Failed", NULL);
             exit(0);
         }
     );
