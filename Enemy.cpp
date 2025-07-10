@@ -37,6 +37,21 @@ Enemy::Enemy() {
     m_collisionBoxSilk->setSize({ 225, 225 });
     m_collisionBoxSilk->setEnabled(false);
 
+    std::cout << "Setting up enemy animations..." << std::endl;
+    
+    // Check critical textures before using them:
+    SDL_Texture* aimTex = AssetManager::instance()->findTexture("enemy/aim");
+    SDL_Texture* idleTex = AssetManager::instance()->findTexture("enemy/idle");
+    SDL_Texture* dashTex = AssetManager::instance()->findTexture("enemy/dash_in_air");
+    SDL_Texture* runTex = AssetManager::instance()->findTexture("enemy/run");
+    SDL_Texture* jumpTex = AssetManager::instance()->findTexture("enemy/jump");
+
+    std::cout << "Attack texture: " << (aimTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Idle texture: " << (idleTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Dash texture: " << (dashTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Run texture: " << (runTex ? "OK" : "NULL") << std::endl;
+    std::cout << "Attack texture: " << (jumpTex ? "OK" : "NULL") << std::endl;
+    
     {
         {
             AnimationGroup& animationAim = p_animationPool["aim"];
@@ -54,7 +69,7 @@ Enemy::Enemy() {
             animationAimRight.addFrame(AssetManager::instance()->findAtlas("enemy/aim"), true);
         }
         {
-            AnimationGroup& animationDashInAir = p_animationPool["dash_in_air"];
+            AnimationGroup& animationDashInAir = p_animationPool["dashInAir"];
 
             Animation& animationDashInAirLeft = animationDashInAir.left;
             animationDashInAirLeft.setInterval(0.05f);
@@ -67,6 +82,21 @@ Enemy::Enemy() {
             animationDashInAirRight.setLoop(true);
             animationDashInAirRight.setAnchorMode(Animation::AnchorMode::BottomCentered);
             animationDashInAirRight.addFrame(AssetManager::instance()->findAtlas("enemy/dash_in_air"), true);
+        }
+        {
+            AnimationGroup& animationDashOnFloor = p_animationPool["dashOnFloor"];
+
+            Animation& animationDashOnFloorLeft = animationDashOnFloor.left;
+            animationDashOnFloorLeft.setInterval(0.05f);
+            animationDashOnFloorLeft.setLoop(true);
+            animationDashOnFloorLeft.setAnchorMode(Animation::AnchorMode::BottomCentered);
+            animationDashOnFloorLeft.addFrame(AssetManager::instance()->findAtlas("enemy/dash_on_floor"));
+
+            Animation& animationDashOnFloorRight = animationDashOnFloor.right;
+            animationDashOnFloorRight.setInterval(0.05f);
+            animationDashOnFloorRight.setLoop(true);
+            animationDashOnFloorRight.setAnchorMode(Animation::AnchorMode::BottomCentered);
+            animationDashOnFloorRight.addFrame(AssetManager::instance()->findAtlas("enemy/dash_on_floor"), true);
         }
         {
             AnimationGroup& animationFall = p_animationPool["fall"];
