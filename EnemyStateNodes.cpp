@@ -411,7 +411,7 @@ EnemyThrowSwordState::EnemyThrowSwordState() {
                 if (randomNum <= 50) {
                     enemy->switchState("jump");
                 } else if (randomNum <= 80){
-                    enemy->switchState("thrwoSilk");
+                    enemy->switchState("throwSilk");
                 } else {
                     enemy->switchState("idle");
                 } 

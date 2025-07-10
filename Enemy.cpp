@@ -263,8 +263,8 @@ Enemy::Enemy() {
         p_stateMachine.registerState("run", new EnemyRunState());
         p_stateMachine.registerState("squat", new EnemySquatState());
         p_stateMachine.registerState("throwBarb", new EnemyThrowBarbState());
-        p_stateMachine.registerState("thrwoSilk", new EnemyThrowSilkState());
-        p_stateMachine.registerState("thrwoSword", new EnemyThrowSwordState());
+        p_stateMachine.registerState("throwSilk", new EnemyThrowSilkState());
+        p_stateMachine.registerState("throwSword", new EnemyThrowSwordState());
 
         p_stateMachine.setEntry("idle");
     }
