@@ -76,7 +76,7 @@ private:
 
 class EnemyJumpState : public StateNode {
 public:
-    EnemyJumpState();
+    EnemyJumpState() = default;
     ~EnemyJumpState() = default;
 
     void onEnter() override;
@@ -88,7 +88,7 @@ private:
 
 class EnemyRunState : public StateNode {
 public:
-    EnemyRunState();
+    EnemyRunState() = default;
     ~EnemyRunState() = default;
 
     void onEnter() override;
