@@ -1,10 +1,12 @@
 #define SDL_MAIN_HANDLED
 
+#include "Enemy.h"
 #include "Camera.h"
 #include "AssetManager.h"
 #include "CollisionManager.h"
 #include "CharacterManager.h"
 #include "BulletTimeManager.h"
+#include "EnemyStateNodes.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
