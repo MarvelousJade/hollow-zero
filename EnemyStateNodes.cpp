@@ -85,6 +85,7 @@ void EnemyDashOnFloorState::onEnter() {
     enemy->setVelocity({ enemy->getFacingLeft() ?  -SPEED_DASH : SPEED_DASH, 0 });
     enemy->setDashingOnFloor(true);
     enemy->onDash();
+    m_timer.restart();
 
     playAudio("audio/enemy_dash", false);
 }
@@ -96,7 +97,7 @@ void EnemyDashOnFloorState::onUpdate(float deltaTime) {
 
     if (enemy->getHp() <= 0) {
         enemy->switchState("dead");
-    } else if (enemy->getDashingOnFloor()) {
+    } else if (!enemy->getDashingOnFloor()) {
         enemy->switchState("idle");
     }
 }
