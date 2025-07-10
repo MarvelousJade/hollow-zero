@@ -88,10 +88,7 @@ Player::Player() {
             animationAttackRight.setLoop(false);
             animationAttackRight.setAnchorMode(Animation::AnchorMode::BottomCentered);
 
-            std::cout << "10. Adding frames to attack right animation..." << std::endl;
             animationAttackRight.addFrame(AssetManager::instance()->findTexture("player/attack"), 5);
-
-            std::cout << "11. Attack animations complete!" << std::endl;
         }
         {
             AnimationGroup& animationDead = p_animationPool["dead"];
