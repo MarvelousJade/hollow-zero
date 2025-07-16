@@ -31,6 +31,12 @@ Player::Player() {
             if (!m_hasPlayedHitAudioThisFrame) {
                 playAudio("audio/barb_break", false);
                 m_hasPlayedHitAudioThisFrame = true;
+                
+                // Add camera shake when hitting enemy
+                extern Camera* camera;
+                if (camera) {
+                    camera->shake(3.0f, 0.1f);
+                }
             }
         }
     );
@@ -368,7 +374,13 @@ void Player::render(const Camera& camera) {
 
 void Player::onHurt() {
     setAudioVolum("audio/player_hurt", 128);
-    playAudio("audio/player_hurt", false); 
+    playAudio("audio/player_hurt", false);
+    
+    // Add camera shake when player gets hurt
+    extern Camera* camera;
+    if (camera) {
+        camera->shake(5.0f, 0.1f);
+    }
 }
 
 void Player::onJump() {
