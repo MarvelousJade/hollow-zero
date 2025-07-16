@@ -55,7 +55,7 @@ void CollisionManager::handleCollision() {
             bool isCollidingY = (
                 fmax(collisionBoxSrc->m_position.y + collisionBoxSrc->m_size.y / 2, collisionBoxDst->m_position.y + collisionBoxDst->m_size.y / 2)
                 - fmin(collisionBoxSrc->m_position.y - collisionBoxSrc->m_size.y / 2, collisionBoxDst->m_position.y - collisionBoxDst->m_size.y / 2)
-                <= collisionBoxSrc->m_size.y + collisionBoxDst->m_size.y / 2
+                <= collisionBoxSrc->m_size.y + collisionBoxDst->m_size.y
             );
 
             if (isCollidingX && isCollidingY && collisionBoxDst->m_onCollide) {
