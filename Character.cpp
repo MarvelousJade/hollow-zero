@@ -90,7 +90,7 @@ void Character::switchState(const std::string& id) {
 }
 
 void Character::setAnimation(const std::string& id) {
-    std::cerr << "Setting animation to: " << id << std::endl;
+    // std::cerr << "Setting animation to: " << id << std::endl;
     auto it = p_animationPool.find(id);
     if (it == p_animationPool.end()) {
         std::cerr << "ERROR: Animation '" << id << "' not found in pool!" << std::endl;
@@ -98,9 +98,9 @@ void Character::setAnimation(const std::string& id) {
     }
 
     p_currentAnimation = &p_animationPool[id];
-    std::cerr << "Animation " << id << " set successfully, address: " << p_currentAnimation << std::endl;
-    std::cerr << "Left frames: " << p_currentAnimation->left.getFrameCount() 
-              << ", Right frames: " << p_currentAnimation->right.getFrameCount() << std::endl;
+    // std::cerr << "Animation " << id << " set successfully, address: " << p_currentAnimation << std::endl;
+    // std::cerr << "Left frames: " << p_currentAnimation->left.getFrameCount() 
+    //           << ", Right frames: " << p_currentAnimation->right.getFrameCount() << std::endl;
 
     p_currentAnimation->left.reset();
     p_currentAnimation->right.reset();

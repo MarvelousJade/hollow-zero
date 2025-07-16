@@ -114,7 +114,7 @@ public:
             return;
         }
 
-        std::cerr << "Adding frames: texture=" << texture << ", w=" << width << ", h=" << height << ", frames=" << horizontalFrames << std::endl;
+        // std::cerr << "Adding frames: texture=" << texture << ", w=" << width << ", h=" << height << ", frames=" << horizontalFrames << std::endl;
 
         int frameWidth = width / horizontalFrames;
 
@@ -126,7 +126,7 @@ public:
             m_frameList.emplace_back(texture, rectSrc, shouldFlip);
         }
 
-        std::cerr << "Total frames now: " << m_frameList.size() << std::endl;
+        // std::cerr << "Total frames now: " << m_frameList.size() << std::endl;
     }
 
     void addFrame(Atlas* atlas, bool shouldFlip = false) {
