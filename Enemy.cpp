@@ -3,7 +3,6 @@
 #include "Atlas.h"
 #include "Barb.h"
 #include "Character.h"
-#include "CharacterManager.h"
 #include "AssetManager.h"
 #include "CollisionBox.h"
 #include "CollisionManager.h"
@@ -13,6 +12,7 @@
 #include <algorithm>
 
 Enemy::Enemy() {
+    p_hp = 15;
     p_isFacingLeft = true; 
     p_position= { 1050, 200 };
     p_logicHeight = 150;
@@ -343,7 +343,7 @@ void Enemy::onHurt() {
 void Enemy::throwBarbs() {
     int newBarbCount = randomInt(3, 6);
     if (m_barbList.size() >= 10) newBarbCount = 1;
-    int widthGrid = 720 / newBarbCount;
+    int widthGrid = 1280 / newBarbCount;
 
     for (int i = 0; i < newBarbCount; i++) {
         Barb* newBarb = new Barb();
