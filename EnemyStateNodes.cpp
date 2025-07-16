@@ -133,36 +133,36 @@ EnemyIdleState::EnemyIdleState() {
                     if (!enemy->isOnFloor()) {
                         enemy->switchState("fall");
                     } else {
-                        enemy->switchState("jump");
+                        enemy->switchState("jump");     // 25%
                     }
                 } else if (randomNum <= 50) {
                     if (!enemy->isOnFloor()) {
                         enemy->switchState("fall");
                     } else {
-                        enemy->switchState("run");
+                        enemy->switchState("run");      // 25%
                     }
                 } else if (randomNum <= 80) {
-                    enemy->switchState("squat");
+                    enemy->switchState("squat");        // 30%
                 } else if (randomNum <= 90) {
-                    enemy->switchState("throwSilk");
+                    enemy->switchState("throwSilk");    // 10%
                 } else {
-                    enemy->switchState("throwSword");
+                    enemy->switchState("throwSword");   // 10%
                 }
             } else {
                 if (randomNum <= 25) {
                     if (!enemy->isOnFloor()) {
                         enemy->switchState("fall");
                     } else {
-                        enemy->switchState("jump");
+                        enemy->switchState("jump");     // 25%
                     }
                 } else if (randomNum <= 60) {
-                    enemy->switchState("throwSword");
+                    enemy->switchState("throwSword");   // 35%
                 } else if (randomNum <= 70) {
-                    enemy->switchState("throwSilk");
+                    enemy->switchState("throwSilk");    // 10%
                 } else if (randomNum <= 90) {
-                    enemy->switchState("throwBarb");
+                    enemy->switchState("throwBarb");    // 20%
                 } else {
-                    enemy->switchState("squat");
+                    enemy->switchState("squat");        // 10%
                 }
             }
         }
@@ -240,7 +240,7 @@ void EnemyJumpState::onUpdate(float deltaTime) {
 void EnemyRunState::onEnter() {
     CharacterManager::instance()->getEnemy()->setAnimation("run");
 
-    m_audioChannel = playAudio("audio/enemyRun", true);
+    m_audioChannel = playAudio("audio/enemy_run", true);
 }
 
 void EnemyRunState::onUpdate(float deltaTime) {
