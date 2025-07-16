@@ -11,7 +11,7 @@ class Sword {
     Vector2 m_position;
     Vector2 m_veclocity;
     Animation m_animation;
-    bool m_isValid;
+    bool m_isValid = true;
     CollisionBox* m_collisionBox = nullptr;
 
 public:

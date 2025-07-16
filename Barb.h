@@ -34,7 +34,7 @@ private:
     Timer m_timerIdle;
     Timer m_timerAim;
     int m_diffPeriod = 0;
-    bool m_isValid;
+    bool m_isValid = true;
     float m_totalDeltaTime = 0;
 
     Vector2 m_basePosition;
