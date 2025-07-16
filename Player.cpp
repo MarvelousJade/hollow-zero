@@ -29,8 +29,7 @@ Player::Player() {
     p_hitBox->setOnCollide(
         [&]() {
             if (!m_hasPlayedHitAudioThisFrame) {
-                int attackSound = randomInt(1, 3);
-                playAudio("audio/player_attack_" + std::to_string(attackSound), false);
+                playAudio("audio/barb_break", false);
                 m_hasPlayedHitAudioThisFrame = true;
             }
         }
@@ -368,6 +367,7 @@ void Player::render(const Camera& camera) {
 }
 
 void Player::onHurt() {
+    setAudioVolum("audio/player_hurt", 128);
     playAudio("audio/player_hurt", false); 
 }
 
