@@ -7,6 +7,7 @@
 #include "CharacterManager.h"
 #include "BulletTimeManager.h"
 #include "EnemyStateNodes.h"
+#include "Utils.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -28,6 +29,7 @@ bool isRunning = true;
 
 bool isCooldown = true;
 bool isFireKeyDown = false;
+Mix_Music* musicBgm = nullptr;
 
 void loadResources();
 void unloadResources();
@@ -118,6 +120,7 @@ bool init() {
     try {
         std::cout << "Loading assets..." << std::endl;
         AssetManager::instance()->load(renderer);
+        musicBgm = Mix_LoadMUS("assets/audio/bgm.mp3");
         std::cout << "Assets loaded successfully!" << std::endl;
     } catch (const std::runtime_error& e) {
         const std::string errMsg = "Can't load assets: " + std::string(e.what());
@@ -144,6 +147,8 @@ bool init() {
 void clean() {
     delete camera;
 
+    Mix_FreeMusic(musicBgm);
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 
@@ -157,6 +162,8 @@ void mainLoop() {
     using namespace std::chrono;
 
     SDL_Event event;
+
+    Mix_PlayMusic(musicBgm, 1);
 
     const nanoseconds frameDuration(100000000 / 144);
     steady_clock::time_point lastTick = steady_clock::now();
@@ -195,20 +202,41 @@ void update(float deltaTime) {
     CollisionManager::instance()->handleCollision();
 }
 
+static void drawBackground(const Camera& camera) {
+    int widthBg, heightBg;
+
+    static SDL_Texture* texBackground = AssetManager::instance()->findTexture("background");
+
+    SDL_QueryTexture(texBackground, nullptr, nullptr, &widthBg, &heightBg);
+    const SDL_FRect rectBg = {
+        (1280 - widthBg) / 2.0f,
+        (720 - heightBg) / 2.0f,
+        (float)widthBg, (float)heightBg
+    };
+    camera.renderTexture(texBackground, nullptr, &rectBg, 0, nullptr);
+}
+
+static void drawRamainHp(const Camera& camera) {
+    int width, height;
+
+    static SDL_Texture* texUiHeart = AssetManager::instance()->findTexture("ui_heart");
+
+    SDL_QueryTexture(texUiHeart, nullptr, nullptr, &width, &height);
+    SDL_FRect rectDst = {
+        0,
+        10,
+        (float)width, (float)height
+    };
+
+    for (int i = 0; i < CharacterManager::instance()->getPlayer()->getHp(); i++) {
+        rectDst.x = 10 + i * 40;
+        camera.renderTexture(texUiHeart, nullptr, &rectDst, 0, nullptr);
+    }
+}
+
 void render(const Camera& camera) {
-    {
-        int widthBg, heightBg;
-
-        static SDL_Texture* texBackground = AssetManager::instance()->findTexture("background");
-
-        SDL_QueryTexture(texBackground, nullptr, nullptr, &widthBg, &heightBg);
-        const SDL_FRect rectBg = {
-            (1280 - widthBg) / 2.0f,
-            (720 - heightBg) / 2.0f,
-            (float)widthBg, (float)heightBg
-        };
-        camera.renderTexture(texBackground, nullptr, &rectBg, 0, nullptr);
-    } 
+    drawBackground(camera);
+    drawRamainHp(camera);
 
     CharacterManager::instance()->render(camera);
     CollisionManager::instance()->debugRender(camera);
