@@ -97,6 +97,8 @@ private:
     bool m_isLandingVfxVisible = false;
     Animation m_animationLandingVfx;
 
+    bool m_hasPlayedHitAudioThisFrame = false;
+
     void updateAttackDirection(int x, int y);
     void updateAttackDirection();
 };

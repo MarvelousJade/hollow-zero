@@ -18,13 +18,24 @@ Player::Player() {
     p_hitBox->setSize({ 150, 150 });
     p_hurtBox->setSize({ 40, 80 });
 
-    p_hitBox->setLayerSrc(CollisionLayer::None);
+    p_hitBox->setLayerSrc(CollisionLayer::Player);
     p_hitBox->setLayerDst(CollisionLayer::Enemy);
 
     p_hurtBox->setLayerSrc(CollisionLayer::Player);
     p_hurtBox->setLayerDst(CollisionLayer::None);
 
     p_hitBox->setEnabled(false);
+
+    p_hitBox->setOnCollide(
+        [&]() {
+            if (!m_hasPlayedHitAudioThisFrame) {
+                int attackSound = randomInt(1, 3);
+                playAudio("audio/player_attack_" + std::to_string(attackSound), false);
+                m_hasPlayedHitAudioThisFrame = true;
+            }
+        }
+    );
+
     p_hurtBox->setOnCollide(
         [&]() {
             decreaseHp();
@@ -315,6 +326,9 @@ void Player::onInput(const SDL_Event& e) {
 }
 
 void Player::onUpdate(float deltaTime) {
+    // Reset hit audio flag each frame
+    m_hasPlayedHitAudioThisFrame = false;
+    
     if (p_hp > 0 && !m_isRolling) {
         p_velocity.x = getMoveAxis() * SPEED_RUN;
     }
@@ -354,7 +368,7 @@ void Player::render(const Camera& camera) {
 }
 
 void Player::onHurt() {
-    playAudio("player_hurt", false); 
+    playAudio("audio/player_hurt", false); 
 }
 
 void Player::onJump() {
