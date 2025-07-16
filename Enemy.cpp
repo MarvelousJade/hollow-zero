@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Animation.h"
+#include "Atlas.h"
 #include "Barb.h"
 #include "Character.h"
 #include "CharacterManager.h"
@@ -40,11 +41,11 @@ Enemy::Enemy() {
     std::cout << "Setting up enemy animations..." << std::endl;
     
     // Check critical textures before using them:
-    SDL_Texture* aimTex = AssetManager::instance()->findTexture("enemy/aim");
-    SDL_Texture* idleTex = AssetManager::instance()->findTexture("enemy/idle");
-    SDL_Texture* dashTex = AssetManager::instance()->findTexture("enemy/dash_in_air");
-    SDL_Texture* runTex = AssetManager::instance()->findTexture("enemy/run");
-    SDL_Texture* jumpTex = AssetManager::instance()->findTexture("enemy/jump");
+    Atlas* aimTex = AssetManager::instance()->findAtlas("enemy/aim");
+    Atlas* idleTex = AssetManager::instance()->findAtlas("enemy/idle");
+    Atlas* dashTex = AssetManager::instance()->findAtlas("enemy/dash_in_air");
+    Atlas* runTex = AssetManager::instance()->findAtlas("enemy/run");
+    Atlas* jumpTex = AssetManager::instance()->findAtlas("enemy/jump");
 
     std::cout << "Attack texture: " << (aimTex ? "OK" : "NULL") << std::endl;
     std::cout << "Idle texture: " << (idleTex ? "OK" : "NULL") << std::endl;
