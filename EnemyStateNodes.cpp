@@ -422,7 +422,7 @@ EnemyThrowSwordState::EnemyThrowSwordState() {
 
 
 void EnemyThrowSwordState::onEnter() {
-    CharacterManager::instance()->getEnemy()->setAnimation("throwSilk");
+    CharacterManager::instance()->getEnemy()->setAnimation("throwSword");
     m_timerThrow.restart();
     m_timerSwitch.restart();
 }
