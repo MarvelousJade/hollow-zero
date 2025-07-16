@@ -29,7 +29,7 @@ void Sword::update(float deltaTime) {
 
     m_animation.update(deltaTime);
 
-    if(m_position.x <= -200 || m_position.x >= 720 + 200) m_isValid = false;
+    if(m_position.x <= -200 || m_position.x >= 1280 + 200) m_isValid = false;
 }
 
 void Sword::render(const Camera &camera) {
