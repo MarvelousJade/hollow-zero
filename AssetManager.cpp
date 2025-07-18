@@ -78,28 +78,25 @@ Atlas* AssetManager::findAtlas(const std::string& name) {
 
 void AssetManager::load(SDL_Renderer* renderer) {
     using namespace std::filesystem;
-    
+
     if (!renderer) {
         throw std::runtime_error("Renderer is null!");
     }
 
+    // std::cout << "Loading assets..." << std::endl;
     path assetsPath("assets");
     if (!exists(assetsPath)) {
         throw std::runtime_error("Assets directory not found!");
     }
 
-    std::cout << "Loading assets from: " << absolute(assetsPath) << std::endl;
-
-    // First pass: Load all textures and audio
+    // std::cout << "Loading assets from: " << absolute(assetsPath) << std::endl;
     loadTexturesAndAudio(renderer, assetsPath);
-    
-    // Second pass: Create atlases from loaded textures
     loadAtlases();
     
-    std::cout << "Asset loading complete!" << std::endl;
-    std::cout << "  Textures loaded: " << texturePool.size() << std::endl;
-    std::cout << "  Audio loaded: " << audioPool.size() << std::endl;
-    std::cout << "  Atlases created: " << atlasPool.size() << std::endl;
+    // std::cout << "Asset loading complete!" << std::endl;
+    // std::cout << "  Textures loaded: " << texturePool.size() << std::endl;
+    // std::cout << "  Audio loaded: " << audioPool.size() << std::endl;
+    // std::cout << "  Atlases created: " << atlasPool.size() << std::endl;
 }
 
 void AssetManager::loadTexturesAndAudio(SDL_Renderer* renderer, const std::filesystem::path& assetsPath) {
