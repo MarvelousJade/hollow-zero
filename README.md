@@ -4,7 +4,7 @@ A fast-paced 2D action game built from scratch in C++ using SDL2, featuring flui
 
 ## 🎮 Game Overview
 
-Katana Zero is a skill-based action game where players control a samurai warrior facing off against an intelligent boss enemy. The game emphasizes precise timing, fluid movement, and strategic combat in a stylized 2D environment.
+https://github.com/user-attachments/assets/5e42358e-ede2-4be3-ba68-1fa83491453b
 
 ### Key Features
 - **Fluid Combat System**: Multi-directional attacks with visual feedback and combo potential
