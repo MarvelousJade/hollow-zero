@@ -1,5 +1,6 @@
 .cache/clangd/index
 build
+web
 compile_commands.json
 error.txt
 core

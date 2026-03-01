@@ -1,4 +1,6 @@
+#ifndef __EMSCRIPTEN__
 #define SDL_MAIN_HANDLED
+#endif
 
 #include "Enemy.h"
 #include "Camera.h"
@@ -13,6 +15,10 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #include <chrono>
 #include <thread>
@@ -40,7 +46,10 @@ void render(const Camera& camera);
 void mainLoop();
 
 int main(int argc, char** argv) {
-    init();
+    if (!init()) {
+        clean();
+        return 1;
+    }
     mainLoop();
     clean();
 
@@ -49,7 +58,11 @@ int main(int argc, char** argv) {
 
 bool init() {
     // Initialize SDL
+#ifdef __EMSCRIPTEN__
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) < 0) {
+#else
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+#endif
         std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
         return false;
     }
@@ -63,12 +76,16 @@ bool init() {
     }
 
     // Initialize Mix
+#ifndef __EMSCRIPTEN__
     if (Mix_Init(MIX_INIT_MP3) == 0) {
         std::cerr << "SDL_mixer initialization failed: " << Mix_GetError() << std::endl;
         IMG_Quit();
         SDL_Quit();
         return false;
     }
+#else
+    Mix_Init(0);
+#endif
 
     // Initialize TTF
     if (TTF_Init() == -1) {
@@ -89,6 +106,8 @@ bool init() {
         return false;
     }
     Mix_AllocateChannels(32);
+    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
 
     window = SDL_CreateWindow("Atlas", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
                               1280, 720, SDL_WINDOW_SHOWN);
@@ -158,39 +177,46 @@ void clean() {
     SDL_Quit();
 }
 
-void mainLoop() {
+static std::chrono::steady_clock::time_point lastTick;
+
+static void mainLoopIteration() {
     using namespace std::chrono;
 
     SDL_Event event;
-
-    Mix_PlayMusic(musicBgm, 1);
-
-    const nanoseconds frameDuration(100000000 / 144);
-    steady_clock::time_point lastTick = steady_clock::now();
-
-    while (isRunning) {
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    isRunning = false; 
-                    break;
-            }
-
-            CharacterManager::instance()->onInput(event);
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_QUIT) {
+            isRunning = false;
         }
-        steady_clock::time_point frameStart = steady_clock::now();
-        duration<float> deltaTime = duration<float>(frameStart - lastTick);
-
-        update(deltaTime.count());
-
-        render(*camera);
-
-        SDL_RenderPresent(renderer);
-
-        lastTick = frameStart;
-        nanoseconds sleepDuration = frameDuration - (steady_clock::now() - frameStart);
-        if (sleepDuration > nanoseconds(0)) std::this_thread::sleep_for(sleepDuration);
+        CharacterManager::instance()->onInput(event);
     }
+
+    steady_clock::time_point frameStart = steady_clock::now();
+    duration<float> deltaTime = duration<float>(frameStart - lastTick);
+
+    update(deltaTime.count());
+    render(*camera);
+    SDL_RenderPresent(renderer);
+
+    lastTick = frameStart;
+
+#ifndef __EMSCRIPTEN__
+    const nanoseconds frameDuration(100000000 / 144);
+    nanoseconds sleepDuration = frameDuration - (steady_clock::now() - frameStart);
+    if (sleepDuration > nanoseconds(0)) std::this_thread::sleep_for(sleepDuration);
+#endif
+}
+
+void mainLoop() {
+    Mix_PlayMusic(musicBgm, 1);
+    lastTick = std::chrono::steady_clock::now();
+
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(mainLoopIteration, 0, 1);
+#else
+    while (isRunning) {
+        mainLoopIteration();
+    }
+#endif
 }
 
 void update(float deltaTime) {
@@ -239,6 +265,5 @@ void render(const Camera& camera) {
     drawRamainHp(camera);
 
     CharacterManager::instance()->render(camera);
-    CollisionManager::instance()->debugRender(camera);
 }
 

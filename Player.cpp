@@ -373,7 +373,6 @@ void Player::render(const Camera& camera) {
 }
 
 void Player::onHurt() {
-    setAudioVolum("audio/player_hurt", 128);
     playAudio("audio/player_hurt", false);
     
     // Add camera shake when player gets hurt

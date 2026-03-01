@@ -3,15 +3,23 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 LDFLAGS_DYNAMIC = -lSDL2 -lSDL2_ttf -lSDL2_image -lSDL2_mixer
 
 CXXFLAGS_DEBUG = -std=c++20 -Wall -Wextra -g -O0 -DDEBUG
-OBJECTS_DEBUG = $(addprefix build/debug/, $(SOURCES:.cpp=.o))
 
 SOURCES = main.cpp AssetManager.cpp Barb.cpp BulletTimeManager.cpp Character.cpp CharacterManager.cpp CollisionManager.cpp Enemy.cpp EnemyStateNodes.cpp Player.cpp PlayerStateNodes.cpp StateMachine.cpp StateNode.cpp Sword.cpp
-HEADERS = Animation.h AssetManager.h Atlas.h Barb.h BulletTimeManager.h Camera.h Character.h CharacterManager.h CollisionBox.h CollisionLayer.h CollisionManager.h Player.h Enemy.h EnemyStateNodes.h Player.h PlayerStateNodes.h StateMachine.h StateNode.h Sword.h Timer.h Vector2.h Utils.h 
+HEADERS = Animation.h AssetManager.h Atlas.h Barb.h BulletTimeManager.h Camera.h Character.h CharacterManager.h CollisionBox.h CollisionLayer.h CollisionManager.h Player.h Enemy.h EnemyStateNodes.h Player.h PlayerStateNodes.h StateMachine.h StateNode.h Sword.h Timer.h Vector2.h Utils.h
 
 OBJECTS = $(addprefix build/, $(SOURCES:.cpp=.o))
+OBJECTS_DEBUG = $(addprefix build/debug/, $(SOURCES:.cpp=.o))
 EXECUTABLE = hollowZero
 
 COMPILE_COMMANDS = compile_commands.json
+
+# Emscripten web build
+EMXX = em++
+EMFLAGS = -std=c++20 -O2
+EMLDFLAGS = -sUSE_SDL=2 -sUSE_SDL_IMAGE=2 -sSDL2_IMAGE_FORMATS='["png"]' \
+            -sUSE_SDL_MIXER=2 -sSDL2_MIXER_FORMATS='["mp3"]' \
+            -sUSE_SDL_TTF=2 -sALLOW_MEMORY_GROWTH=1 \
+            --preload-file assets
 
 all: build/$(EXECUTABLE)
 
@@ -23,7 +31,7 @@ build/%.o: %.cpp $(HEADERS) | build
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build:
-	mkdir -p build
+	@if not exist build mkdir build
 
 # Run the executable
 run: build/$(EXECUTABLE)
@@ -40,7 +48,7 @@ build/debug/%.o: %.cpp $(HEADERS) | build/debug
 	$(CXX) $(CXXFLAGS_DEBUG) -c $< -o $@
 
 build/debug:
-	mkdir -p build/debug
+	@if not exist build\debug mkdir build\debug
 
 debug: build/debug/$(EXECUTABLE)
 	@echo "Starting debug version with gdb..."
@@ -77,8 +85,15 @@ $(COMPILE_COMMANDS): $(SOURCES) $(HEADERS)
 # Setup clangd support
 clangd: $(COMPILE_COMMANDS)
 
-clean:
-	rm -rf build/ dist/
-	rm -f $(OBJECTS) build/$(EXECUTABLE) build/$(EXECUTABLE)_static build/$(EXECUTABLE)_portable
+# Emscripten web build (produces web/index.html, .js, .wasm, .data)
+web: $(SOURCES) $(HEADERS) | web_dir
+	$(EMXX) $(EMFLAGS) $(SOURCES) -o web/index.html $(EMLDFLAGS)
 
-.PHONY: all clean run debug valgrind clangd
+web_dir:
+	@if not exist web mkdir web
+
+clean:
+	@if exist build rmdir /s /q build
+	@if exist web rmdir /s /q web
+
+.PHONY: all clean run debug run-debug valgrind clangd web
